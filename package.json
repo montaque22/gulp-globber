@@ -1,0 +1,31 @@
+{
+  "name": "gulp-globber",
+  "version": "1.0.0",
+  "description": "Allow gulp-sass to utilize globbing to compile partials",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/montaque22/gulp-globber"
+  },
+  "keywords": [
+    "gulp",
+    "sass",
+    "globbing"
+  ],
+  "author": "Michael Montaque",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/montaque22/gulp-globber/issues"
+  },
+  "homepage": "https://github.com/montaque22/gulp-globber",
+  "dependencies": {
+    "gulp-util": "^3.0.7",
+    "q": "^1.4.1",
+    "recursive-readdir": "^1.3.0",
+    "sugar": "^1.4.1",
+    "through2": "^2.0.1"
+  }
+}
