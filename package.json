@@ -1,6 +1,6 @@
 {
   "name": "gulp-globber",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Allow gulp-sass to utilize globbing to compile partials",
   "main": "index.js",
   "scripts": {
