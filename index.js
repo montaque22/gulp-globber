@@ -3,111 +3,91 @@
  */
 // through2 is a thin wrapper around node transform streams
 var through     = require('through2');
-var gutil       = require('gulp-util');
 var recursive   = require('recursive-readdir');
-var fs          = require('fs');
-var Q           = require('q');
+var File        = require('vinyl');
+var path        = require('path');
+var gutil       = require('gulp-util');
 var PluginError = gutil.PluginError;
 
 // Consts
 const PLUGIN_NAME = 'gulp-globber';
 
 // Plugin level function(dealing with files)
-function gulpGlobber(file, options) {
+function gulpGlobber(options) {
 
-    var mainFile        = options.main;
+    if(!options || !options.source){
+        throw new PluginError(PLUGIN_NAME, 'Missing required option "source"');
+    }
+
+
+
+    // new name for the css file
+    var renamedFile     = options.rename;
+
+    // directory containing the scss files you want to include
     var sourceFiles     = options.source;
-    var targetSassName  = options.targetName;
-    var destination     = options.destination;
-    var deferred        = Q.defer();
-    var mainFile        = 'regenerated.scss';
 
-    var cwd = process.cwd();
-    // Look for all the scss files in the views directory
-    //recursive('./client/views/', ['*.js', '*.html'], function (err, files) {
-    //
-    //
-    //    console.log(cwd)
-    //    // read the content of the main scss file
-    //    var scss = fs.readFileSync( + mainFile, 'utf8');
-    //
-    //    // add in a comment
-    //    scss += '\n/* ---- Auto-Generated Content Below ---- */';
-    //
-    //    if(!err){
-    //        // cycle through all the names and add in the new imports
-    //        files.forEach(function(file){
-    //            scss += '\n@import "';
-    //            scss +=  file + '";';
-    //        })
-    //    }
-    //
-    //    // create a new scss file
-    //    fs.writeFileSync(paths.STYLES + mainFile, scss);
-    //
-    //    // read the file
-    //    gulp.src(paths.STYLES + mainFile)
-    //        // Compile it
-    //        .pipe($.sass(sassOptions).on('error', $.sass.logError))
-    //
-    //        // rename it
-    //        .pipe($.rename(function (path) {
-    //            path.basename = "main";
-    //        }))
-    //
-    //        // save it
-    //        .pipe(gulp.dest(paths.STYLES+'../'))
-    //
-    //        // resolve promise
-    //        .on('end',deferred.resolve);
-    //
-    //
-    //});
+    // by default, it will exclude all files except scss files however it can be overridden
+    var excludedFiles   = options.exclude || ['!*.scss'];
 
-    return through.obj(function(file, enc, cb) {
-        console.log(file)
-        console.log(enc)
-        console.log(cb)
 
-        if (file.isNull()) {
-            // return empty file
-            return cb(null, file);
-        }
-        //if (file.isBuffer()) {
-        //    file.contents = Buffer.concat([prefixText, file.contents]);
-        //}
-        //if (file.isStream()) {
-        //    file.contents = file.contents.pipe(prefixStream(prefixText));
-        //}
+    function prefixStream(prefixText) {
+        var stream = through();
+        stream.write(prefixText);
+        return stream;
+    }
 
-        cb(null, file);
+    return through.obj(function(sourceFile, enc, cb) {
+
+        recursive(sourceFiles, excludedFiles, function (err, files) {
+            var postFixText = '';
+            var file = new File(sourceFile);
+            var base = file.base;
+            var basename = path.basename(file.path);
+
+            // stop if there is an error
+            if(err)
+                return cb(err);
+            else  if (file.isNull())
+            // return an empty file
+                return cb(null, file);
+
+            // add in a comment for separation
+            postFixText += '\n\n\n/* ---- Auto-Generated Content Below ---- */';
+
+            // cycle through all the names and add in the new imports
+            files.forEach(function(file){
+                postFixText += '\n@import "';
+                postFixText +=  file + '";';
+            });
+
+            // create text buffer
+            var postFixTextBuffer = new Buffer(postFixText);
+
+
+            // handle file as a buffer
+            if (file.isBuffer()) {
+                file.contents = Buffer.concat([file.contents, postFixTextBuffer]);
+            }
+
+            // handle file as a stream
+            else  if (file.isStream()) {
+                file.contents = file.contents.pipe(prefixStream(postFixTextBuffer));
+            }
+
+            // Rename the file
+            if(renamedFile){
+                file.path = path.join(base, renamedFile);
+            }else{
+                file.path = path.join(base, '_'+basename);
+            }
+
+            // return the file
+            cb(null, file);
+
+        });
 
     });
-    //return deferred.promise;
-
-    //
-    //
-    //if (!prefixText) {
-    //    throw new PluginError(PLUGIN_NAME, 'Missing prefix text!');
-    //}
-    //prefixText = new Buffer(prefixText); // allocate ahead of time
-    //
-    //// Creating a stream through which each file will pass
-    //return through.obj(function(file, enc, cb) {
-    //    if (file.isNull()) {
-    //        // return empty file
-    //        return cb(null, file);
-    //    }
-    //    if (file.isBuffer()) {
-    //        file.contents = Buffer.concat([prefixText, file.contents]);
-    //    }
-    //    if (file.isStream()) {
-    //        file.contents = file.contents.pipe(prefixStream(prefixText));
-    //    }
-    //
-    //    cb(null, file);
-    //
-    //});
 
 }
 
