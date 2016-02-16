@@ -124,21 +124,21 @@ gulp.task('glob1', function(){
 ```
 ### Options
 #### options.source (Required)
-Type    : String | Array
-Default : none
+- Type    : String | Array
+- Default : none
 
 Specify the directories from which you want to import your scss files.
 
 #### options.exclude 
-Type    : Array
-Default : ['!*.scss']
+- Type    : Array
+- Default : ['!*.scss']
 
 For each of the specified sources the plugin will exclude the files dictated by this option. By default, this plugin
 will exclude all files except .scss
 
 #### options.rename 
-Type    : String
-Default : none
+- Type    : String
+- Default : none
 
 Renames the output file to a name of your choosing
 
@@ -151,7 +151,7 @@ Renames the output file to a name of your choosing
 License
 ----
 
-Copyright (c) <2016> <Michael Montaque>
+Copyright (c) 2016 Michael Montaque
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and 
 associated documentation files (the "Software"), to deal in the Software without restriction, 
