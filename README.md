@@ -8,7 +8,7 @@ Some things to note:
   - We cannot guarantee the order of the imports at a file level.
 
 ### Version
-1.1.0
+1.1.1
 
 ## Installation
 
@@ -47,8 +47,7 @@ gulp.task('glob', function(){
         .pipe(gulp.dest(ROOT + '/css/sass'))
 });
 ```
-A new file will be created with the same name as the original with an underscore prefixed to the name. 
-So in this case a new file named _main.scss was created.
+
 
 ```sh
 // test_app/css/sass/_main.scss
@@ -88,7 +87,7 @@ gulp.task('glob2', function(){
             source: [ ROOT + 'css/scss/other_partials', ROOT + 'views/scss/some_other_partials']
         }))
         
-        .pipe(gulp.dest(ROOT + '/css/sass')) // final output will be a file named _main.scss
+        .pipe(gulp.dest(ROOT + '/css/sass')) // final output will be a file named main.scss
 });
 
 // This is also the same as task glob1 & glob2 except the name of the output file will be a little longer
@@ -96,10 +95,10 @@ gulp.task('glob', function(){
     return gulp.src(ROOT + 'css/sass/main.scss')
         //  All the files under this directory will 
         // show up first in the import list
-        .pipe(globber(ROOT + 'css/scss/other_partials')) // outputs a file named _main.scss
-        .pipe(globber(ROOT + 'views/scss/some_other_partials')) // outputs a file named __main.scss
+        .pipe(globber(ROOT + 'css/scss/other_partials')) 
+        .pipe(globber(ROOT + 'views/scss/some_other_partials')) 
 
-        .pipe(gulp.dest(ROOT + '/css/sass')) // final output will be a file named __main.scss
+        .pipe(gulp.dest(ROOT + '/css/sass')) // final output will be a file named main.scss
 });
 ```
 
@@ -139,10 +138,9 @@ will exclude all files except .scss
 
 #### options.rename 
 Type    : String
-Default : '_' + <original-file-name>
+Default : none
 
-To prevent overriding the original file, By default this property will append and underscore to the name of the 
-orginal file. However you can override this behavior and have the plugin rename the file to a name of your choosing.
+Renames the output file to a name of your choosing
 
 
 ### Todos

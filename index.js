@@ -105,6 +105,9 @@ function gulpGlobber(data) {
 
                 // cycle through all the names and add in the new imports
                 files.forEach(function(file){
+                    if(process.platform === 'win32'){
+                        file = file.replace(/\\/g,'/');
+                    }
                     postFixText += '\n@import "';
                     postFixText +=  file + '";';
                 });
@@ -126,8 +129,6 @@ function gulpGlobber(data) {
                 // Rename the file
                 if(renamedFile){
                     file.path = path.join(base, renamedFile);
-                }else{
-                    file.path = path.join(base, '_'+basename);
                 }
 
                 // return the file
